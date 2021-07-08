@@ -1,0 +1,97 @@
+version: 2.1
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:latest
+orbs:
+  cypress: cypress-io/cypress@1
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  bundle_dependencies:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-{{ .Environment.CACHE_VERSION }}
+      - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+
+  build:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-{{ .Environment.CACHE_VERSION }}
+
+      - run: yarn run build
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - .next
+
+  perf:
+    docker:
+      - image: circleci/node:12.1-browsers
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-{{ .Environment.CACHE_VERSION }}
+      - run: sudo yarn global add @lhci/cli@0.3.x
+      - run:
+          name: lhci autorun
+          command: |
+            lhci autorun
+workflows:
+  build-and-test:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              ignore: /develop|master/
+      - bundle_dependencies:
+          requires:
+            - checkout_code
+          filters:
+            branches:
+              ignore: /develop|master/p
+      - build:
+          requires:
+            - bundle_dependencies
+      - cypress/install:
+          yarn: true
+      - cypress/run:
+          yarn: true
+          requires:
+            - cypress/install
+      - perf:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /develop|master/
