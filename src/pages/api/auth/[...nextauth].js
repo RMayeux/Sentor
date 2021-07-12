@@ -11,6 +11,15 @@ const options = {
     Providers.GitHub({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      scope: "user:email repo",
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.login,
+          image: profile.avatar_url,
+          email: profile.email,
+        };
+      },
     }),
     Providers.Email({
       server: {
