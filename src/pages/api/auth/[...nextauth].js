@@ -11,7 +11,7 @@ const options = {
     Providers.GitHub({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
-      scope: "user:email repo",
+      scope: "user:email repo write:repo_hook repository_hooks:write",
       profile(profile) {
         return {
           id: profile.id,
@@ -33,6 +33,12 @@ const options = {
       from: process.env.SMTP_FROM, // The "from" address that you want to use
     }),
   ],
+  callbacks: {
+    session: async (session, user) => {
+      session.id = user.id;
+      return Promise.resolve(session);
+    },
+  },
   adapter: Adapters.Prisma.Adapter({ prisma }),
   secret: process.env.SECRET,
 };

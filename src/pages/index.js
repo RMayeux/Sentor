@@ -1,27 +1,17 @@
-import { signIn, signOut, useSession } from "next-auth/client";
+import { ClientOnly } from "@/components/ClientOnly";
+import { Repositories } from "@/components/Repositories";
+import { signOut } from "next-auth/client";
 
-const IndexPage = () => {
-  const [session, loading] = useSession();
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (session) {
-    console.log("??");
-    return (
-      <div>
-        Hello, {session.user.email ?? session.user.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        You are not logged in! <br />
-        <button onClick={() => signIn()}>Sign in</button>
-      </div>
-    );
-  }
+const IndexPage = ({ session }) => {
+  return (
+    <div>
+      <ClientOnly>
+        <Repositories />
+      </ClientOnly>
+      Hello, {session.user.email ?? session.user.name} <br />
+      <button onClick={() => signOut()}>Sign out</button>
+    </div>
+  );
 };
 
 export default IndexPage;
