@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "accounts" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "compound_id" TEXT NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
     "provider_type" TEXT NOT NULL,
     "provider_id" TEXT NOT NULL,
     "provider_account_id" TEXT NOT NULL,
@@ -17,8 +17,8 @@ CREATE TABLE "accounts" (
 
 -- CreateTable
 CREATE TABLE "sessions" (
-    "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
     "session_token" TEXT NOT NULL,
     "access_token" TEXT NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE "sessions" (
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT,
     "email_verified" TIMESTAMP(3),
@@ -44,10 +44,21 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "verification_requests" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "webhooks" (
+    "id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "repositoryId" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -58,6 +69,9 @@ CREATE TABLE "verification_requests" (
 CREATE UNIQUE INDEX "accounts.compound_id_unique" ON "accounts"("compound_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "accounts.user_id_unique" ON "accounts"("user_id");
+
+-- CreateIndex
 CREATE INDEX "providerAccountId" ON "accounts"("provider_account_id");
 
 -- CreateIndex
@@ -65,6 +79,9 @@ CREATE INDEX "providerId" ON "accounts"("provider_id");
 
 -- CreateIndex
 CREATE INDEX "userId" ON "accounts"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "sessions.user_id_unique" ON "sessions"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "sessions.session_token_unique" ON "sessions"("session_token");
@@ -77,3 +94,6 @@ CREATE UNIQUE INDEX "users.email_unique" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "verification_requests.token_unique" ON "verification_requests"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "webhooks.repositoryId_unique" ON "webhooks"("repositoryId");

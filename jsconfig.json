@@ -9,11 +9,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/helpers/*": ["src/lib/helpers/*"],
       "@/styles/*": ["src/styles/*"],
-      "@/queries/*": ["src/graphql/queries/*"],
-      "@/mutations/*": ["src/graphql/mutations/*"],
-      "@/resolvers/*": ["src/graphql/queries/*"],
-      "@/fragments/*": ["src/graphql/fragments/*"],
       "@/images/*": ["src/assets/images"],
+      "@/apollo-client": ["appolo-client.js"]
     }
   }
 }

@@ -2,10 +2,14 @@ import { ApolloServer } from "apollo-server-micro";
 import { schema } from "@/graphql/schema";
 import { context } from "@/graphql/context";
 const cors = require("micro-cors")(); // highlight-line
-
 const server = new ApolloServer({
   schema,
   context,
+  playground: {
+    settings: {
+      "request.credentials": "include",
+    },
+  },
 });
 const handler = server.createHandler({ path: "/api/graphql" });
 
@@ -15,6 +19,4 @@ export const config = {
   },
 };
 
-export default cors((req, res) =>
-  req.method === "OPTIONS" ? res.end() : handler(req, res)
-);
+export default cors((req, res) => (req.method === "OPTIONS" ? res.end() : handler(req, res)));
