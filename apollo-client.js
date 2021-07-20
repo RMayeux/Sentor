@@ -2,9 +2,16 @@
 
 import { ApolloClient, InMemoryCache, createHttpLink, from } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
+import { toast } from "react-toastify";
 
 const errorLink = onError(({ graphQLErrors }) => {
-  if (graphQLErrors) graphQLErrors.map(({ message }) => console.log(message));
+  console.log({ graphQLErrors });
+
+  if (graphQLErrors)
+    graphQLErrors.map(({ message }) => {
+      toast.error(message);
+      console.log(message);
+    });
 });
 
 const httpLink = createHttpLink({

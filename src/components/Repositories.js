@@ -1,6 +1,9 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { FollowButton } from "./FollowButton";
+import { SetUpModal } from "./SetUpModal";
 
-const GET_REPOSITORIES = gql`
+export const GET_REPOSITORIES = gql`
   query Query {
     repositories {
       id
@@ -10,51 +13,20 @@ const GET_REPOSITORIES = gql`
   }
 `;
 
-const CREATE_WEBHOOK = gql`
-  mutation CreateDraftMutation($data: CreateWebhookInput!) {
-    createWebhook(data: $data) {
-      name
-      hasWebhook
-      id
-    }
-  }
-`;
-
-const DELETE_WEBHOOK = gql`
-  mutation CreateDraftMutation($data: DeleteWebhookInput!) {
-    deleteWebhook(data: $data) {
-      name
-      hasWebhook
-      id
-    }
-  }
-`;
-
 export const Repositories = () => {
   const { data, loading, error } = useQuery(GET_REPOSITORIES);
-  const [createWebhook] = useMutation(CREATE_WEBHOOK, {
-    refetchQueries: [{ query: GET_REPOSITORIES }],
-    awaitRefetchQueries: true,
-  });
-  const [deleteWebhook] = useMutation(DELETE_WEBHOOK, {
-    refetchQueries: [{ query: GET_REPOSITORIES }],
-    awaitRefetchQueries: true,
-  });
+  const [hookedRepositories, setHookedRepositories] = useState([]);
+  const [nonHookedRepositories, setNonHookedRepositories] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      setHookedRepositories(data.repositories.filter((repository) => repository.hasWebhook));
+      setNonHookedRepositories(data.repositories.filter((repository) => !repository.hasWebhook));
+    }
+  }, [data]);
 
   if (loading) {
-    return (
-      <h2>
-        <a href="#loading" aria-hidden="true" className="aal_anchor" id="loading">
-          <svg aria-hidden="true" className="aal_svg" height="16" version="1.1" viewBox="0 0 16 16" width="16">
-            <path
-              fillRule="evenodd"
-              d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"
-            ></path>
-          </svg>
-        </a>
-        Loading...
-      </h2>
-    );
+    return <h2>Loading...</h2>;
   }
 
   if (error) {
@@ -62,36 +34,27 @@ export const Repositories = () => {
     return null;
   }
 
-  const { repositories } = data;
-
-  return (
-    <ul>
-      {repositories.map((repository) => (
+  const RepositoriesComponent = ({ repositories }) => {
+    return repositories.map((repository) => {
+      const [isSetUpModalHidden, setIsSetUpModalHidden] = useState(true);
+      const toggleIsSetUpModalHidden = () => setIsSetUpModalHidden((current) => !current);
+      return (
         <>
-          <li>{repository.name}</li>
-          {(repository.hasWebhook && (
-            <button
-              onClick={() =>
-                deleteWebhook({
-                  variables: { data: { repositoryId: repository.id, repositoryName: repository.name } },
-                })
-              }
-            >
-              Delete
-            </button>
-          )) || (
-            <button
-              onClick={() =>
-                createWebhook({
-                  variables: { data: { repositoryId: repository.id, repositoryName: repository.name } },
-                })
-              }
-            >
-              Create
-            </button>
-          )}
+          <li className="h-16 flex items-center bg-gray-100 rounded-md	w-2/6 m-4 border border-gray-400 relative">
+            <h3 className="ml-4 text-lg">{repository.name}</h3>
+            <FollowButton repository={repository} toggleIsSetUpModalHidden={toggleIsSetUpModalHidden} />
+          </li>
+          <SetUpModal repository={repository} isHidden={isSetUpModalHidden} toggleIsSetUpModalHidden={toggleIsSetUpModalHidden} />
         </>
-      ))}
+      );
+    });
+  };
+  return (
+    <ul className="w-5/6 mt-4 ml-12">
+      {hookedRepositories.length > 0 && <h2 className="text-xl">Followed Repositories</h2>}
+      <RepositoriesComponent repositories={hookedRepositories} />
+      {nonHookedRepositories.length > 0 && <h2 className="text-xl">Availables Repositories</h2>}
+      <RepositoriesComponent repositories={nonHookedRepositories} />
     </ul>
   );
 };
