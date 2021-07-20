@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineWarning, AiOutlineCheckCircle } from "react-icons/ai";
 import { BiLoaderAlt } from "react-icons/bi";
-import { gql } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import client from "../../apollo-client";
+import { GET_REPOSITORIES } from "./Repositories";
 
 export const GET_SWAGGER = gql`
   query swaggerFromRepository($repositoryName: String!, $filePath: String!, $branchName: String!) {
@@ -20,7 +21,22 @@ export const GET_BRANCHES = gql`
   }
 `;
 
+const CREATE_WEBHOOK = gql`
+  mutation CreateDraftMutation($data: CreateWebhookInput!) {
+    createWebhook(data: $data) {
+      name
+      hasWebhook
+      id
+    }
+  }
+`;
+
 export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) => {
+  const mutationConfig = {
+    refetchQueries: [{ query: GET_REPOSITORIES }],
+    awaitRefetchQueries: true,
+  };
+
   const [branchName, setBranchName] = useState("");
   const [isBranchNameValid, setIsBranchNameValid] = useState(null);
   const [branchNameLoading, setBranchNameLoading] = useState(false);
@@ -28,6 +44,7 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
   const [filePath, setFilePath] = useState("");
   const [isFilePathValid, setIsFilePathValid] = useState(null);
   const [filePathLoading, setFilePathLoading] = useState(false);
+  const [createWebhook, { loading: createWebhookLoading }] = useMutation(CREATE_WEBHOOK, mutationConfig);
 
   const [branches, setBranches] = useState(null);
   useEffect(() => {
@@ -133,7 +150,15 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
             </div>
           </div>
         </div>
-        <button className="w-24 h-12 bg-gray-300 rounded-md self-end" type="submit">
+        <button
+          className="w-5/6 h-12 bg-gray-600 rounded-md self-center disabled:bg-gray-300 disabled:opacity-50 disabled:cursor-default"
+          type="submit"
+          disabled={!isFilePathValid || !isBranchNameValid || createWebhookLoading}
+          onClick={() =>
+            createWebhook({ variables: { data: { repositoryId: repository.id, repositoryName: repository.name, branchName, filePath } } })
+          }
+        >
+          <BiLoaderAlt className={`animate-spin ${createWebhookLoading ? "" : "hidden"}`} size={24} />
           Let&apos;s go
         </button>
       </div>

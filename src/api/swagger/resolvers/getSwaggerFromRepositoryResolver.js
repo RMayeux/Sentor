@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-errors";
 import { getContent } from "src/libs/github";
-import { SwaggerParser } from "swagger-parser";
+import SwaggerParser from "@apidevtools/swagger-parser";
 
 export const getSwaggerFromRepositoryResolver = async ({ session }, { repositoryName, branchName, filePath }) => {
   let response;
@@ -21,6 +21,6 @@ export const getSwaggerFromRepositoryResolver = async ({ session }, { repository
   }
 
   return {
-    content: response.data,
+    content: JSON.stringify(response.data),
   };
 };

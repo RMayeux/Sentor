@@ -1,14 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
 import { GET_REPOSITORIES } from "./Repositories";
-const CREATE_WEBHOOK = gql`
-  mutation CreateDraftMutation($data: CreateWebhookInput!) {
-    createWebhook(data: $data) {
-      name
-      hasWebhook
-      id
-    }
-  }
-`;
 
 const DELETE_WEBHOOK = gql`
   mutation CreateDraftMutation($data: DeleteWebhookInput!) {
@@ -25,13 +16,12 @@ export const FollowButton = ({ repository, toggleIsSetUpModalHidden }) => {
     refetchQueries: [{ query: GET_REPOSITORIES }],
     awaitRefetchQueries: true,
   };
-  const [createWebhook] = useMutation(CREATE_WEBHOOK, mutationConfig);
   const [deleteWebhook] = useMutation(DELETE_WEBHOOK, mutationConfig);
 
   const webhookAction = () => {
     const body = { variables: { data: { repositoryId: repository.id, repositoryName: repository.name } } };
     if (repository.hasWebhook) deleteWebhook(body);
-    else toggleIsSetUpModalHidden(body);
+    else toggleIsSetUpModalHidden(true);
   };
 
   return (
