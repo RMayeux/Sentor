@@ -1,7 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { GET_REPOSITORIES } from "./RepositoryList";
 import { BiLoaderAlt } from "react-icons/bi";
-import { toast } from "react-toastify";
 import { repositoryFollowButtonAction } from "src/actions/repositoryFollowButtonAction";
 
 const DELETE_WEBHOOK = gql`
