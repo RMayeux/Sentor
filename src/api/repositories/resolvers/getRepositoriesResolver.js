@@ -14,7 +14,6 @@ export const getRepositoriesResolver = async ({ session, prisma }) => {
 
     return repositories;
   } catch (e) {
-    console.log({ e });
     throw new ApolloError("Could not fetch repositories", "ERROR", {});
   }
 };
