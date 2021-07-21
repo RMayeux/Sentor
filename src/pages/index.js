@@ -1,6 +1,6 @@
 import { ClientOnly } from "@/components/ClientOnly";
 import { NavBar } from "@/components/NavBar";
-import { Repositories } from "@/components/Repositories";
+import { RepositoryList } from "@/components/RepositoryList";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 const IndexPage = ({ session }) => {
   return (
@@ -14,7 +14,7 @@ const IndexPage = ({ session }) => {
             This is the list of repositories linked to your GitHub account, press &quot;Set up&quot; to start configurating your project
           </p>
         </div>
-        <Repositories />
+        <RepositoryList />
       </ClientOnly>
     </div>
   );

@@ -1,7 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import { FollowButton } from "./FollowButton";
-import { SetUpModal } from "./SetUpModal";
+import { Repository } from "./Repository";
 
 export const GET_REPOSITORIES = gql`
   query Query {
@@ -13,7 +12,7 @@ export const GET_REPOSITORIES = gql`
   }
 `;
 
-export const Repositories = () => {
+export const RepositoryList = () => {
   const { data, loading, error } = useQuery(GET_REPOSITORIES);
   const [hookedRepositories, setHookedRepositories] = useState([]);
   const [nonHookedRepositories, setNonHookedRepositories] = useState([]);
@@ -35,20 +34,9 @@ export const Repositories = () => {
   }
 
   const RepositoriesComponent = ({ repositories }) => {
-    return repositories.map((repository) => {
-      const [isSetUpModalHidden, setIsSetUpModalHidden] = useState(true);
-      const toggleIsSetUpModalHidden = () => setIsSetUpModalHidden((current) => !current);
-      return (
-        <>
-          <li className="h-16 flex items-center bg-gray-100 rounded-md	w-2/6 m-4 border border-gray-400 relative">
-            <h3 className="ml-4 text-lg">{repository.name}</h3>
-            <FollowButton repository={repository} toggleIsSetUpModalHidden={toggleIsSetUpModalHidden} />
-          </li>
-          <SetUpModal repository={repository} isHidden={isSetUpModalHidden} toggleIsSetUpModalHidden={toggleIsSetUpModalHidden} />
-        </>
-      );
-    });
+    return repositories.map((repository) => <Repository key={repository.id} repository={repository} />);
   };
+
   return (
     <ul className="w-5/6 mt-4 ml-12">
       {hookedRepositories.length > 0 && <h2 className="text-xl">Followed Repositories</h2>}

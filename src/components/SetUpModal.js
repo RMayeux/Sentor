@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { AiOutlineClose, AiOutlineWarning, AiOutlineCheckCircle } from "react-icons/ai";
 import { BiLoaderAlt } from "react-icons/bi";
 import { gql, useMutation } from "@apollo/client";
 import client from "../../apollo-client";
-import { GET_REPOSITORIES } from "./Repositories";
+import { GET_REPOSITORIES } from "./RepositoryList";
+import { SetUpModalReducer, SetUpModalInitialState } from "@/reducers/SetUpModalReducer";
+import { delayBounceFn } from "src/libs/timer";
 
 export const GET_SWAGGER = gql`
   query swaggerFromRepository($repositoryName: String!, $filePath: String!, $branchName: String!) {
@@ -36,62 +38,41 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
     refetchQueries: [{ query: GET_REPOSITORIES }],
     awaitRefetchQueries: true,
   };
+  const [state, dispatch] = useReducer(SetUpModalReducer, SetUpModalInitialState);
 
-  const [branchName, setBranchName] = useState("");
-  const [isBranchNameValid, setIsBranchNameValid] = useState(null);
-  const [branchNameLoading, setBranchNameLoading] = useState(false);
+  const { branchName, isBranchNameValid, isBranchNameLoading, filePath, isFilePathValid, isFilePathLoading, branches } = state;
 
-  const [filePath, setFilePath] = useState("");
-  const [isFilePathValid, setIsFilePathValid] = useState(null);
-  const [filePathLoading, setFilePathLoading] = useState(false);
   const [createWebhook, { loading: createWebhookLoading }] = useMutation(CREATE_WEBHOOK, mutationConfig);
 
-  const [branches, setBranches] = useState(null);
   useEffect(() => {
-    if (branchName) {
-      setBranchNameLoading(true);
-      const delayDebounceFn = setTimeout(() => {
-        if (!branches) {
-          client.query({ query: GET_BRANCHES, variables: { repositoryName: repository.name } }).then(({ data }) => {
-            setBranches(data.branches);
-            setIsBranchNameValid(!!data?.branches?.find((branch) => branch.name === branchName));
-          });
-        } else {
-          setIsBranchNameValid(!!branches.find((branch) => branch.name === branchName));
-        }
-        setBranchNameLoading(false);
-      }, 1500);
+    if (!branchName) return dispatch({ type: "BRANCH_NAME_DEPENDENCIES_INVALID" });
 
-      return () => clearTimeout(delayDebounceFn);
-    } else {
-      setIsBranchNameValid(null);
-      setBranchNameLoading(false);
-    }
-  }, [branchName]);
+    dispatch({ type: "BRANCH_NAME_CHECK_IN_PROGRESS" });
 
-  useEffect(() => {
-    if (filePath && branchName && isBranchNameValid) {
-      setFilePathLoading(true);
-      const delayDebounceFn = setTimeout(() => {
+    return delayBounceFn(() => {
+      if (!branches) {
         client
-          .query({ query: GET_SWAGGER, variables: { repositoryName: repository.name, branchName, filePath }, errorPolicy: "ignore" })
-          .then(({ data }) => {
-            if (!data) {
-              setIsFilePathValid(false);
-            } else {
-              setIsFilePathValid(true);
-            }
-          });
+          .query({ query: GET_BRANCHES, variables: { repositoryName: repository.name } })
+          .then(({ data }) => dispatch({ type: "BRANCHES_INIT", data }));
+      }
 
-        setFilePathLoading(false);
-      }, 1500);
+      dispatch({ type: "BRANCH_NAME_CHECK" });
+    }, 1000);
+  }, [branchName, repository, branches]);
 
-      return () => clearTimeout(delayDebounceFn);
-    } else {
-      setIsFilePathValid(null);
-      setFilePathLoading(false);
-    }
-  }, [filePath, branchName, isBranchNameValid === true]);
+  useEffect(() => {
+    if (!filePath || !branchName || !isBranchNameValid) return dispatch({ type: "FILE_PATH_DEPENDENCIES_INVALID" });
+
+    dispatch({ type: "FILE_PATH_CHECK_IN_PROGRESS" });
+
+    return delayBounceFn(() => {
+      client
+        .query({ query: GET_SWAGGER, variables: { repositoryName: repository.name, branchName, filePath }, errorPolicy: "ignore" })
+        .then(({ data }) => {
+          dispatch({ type: "FILE_PATH_CHECK", data });
+        });
+    }, 1000);
+  }, [filePath, branchName, isBranchNameValid, repository]);
 
   return (
     <div
@@ -119,16 +100,22 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
               className="ml-4 p-2 pl-3 bg-gray-200 rounded-md outline-none flex-grow border border-gray-300"
               placeholder="main"
               required
-              onChange={(e) => setBranchName(e.target.value)}
+              onChange={(e) =>
+                dispatch({
+                  type: "FIELD",
+                  fieldName: "branchName",
+                  payload: e.currentTarget.value,
+                })
+              }
             />
             <div className={`w-6 ml-2`}>
               <AiOutlineWarning
-                className={`${isBranchNameValid !== null && !isBranchNameValid && !branchNameLoading ? "" : "hidden"}`}
+                className={`${isBranchNameValid !== null && !isBranchNameValid && !isBranchNameLoading ? "" : "hidden"}`}
                 size={24}
                 color="#EF4444"
               />
-              <AiOutlineCheckCircle className={`${isBranchNameValid && !branchNameLoading ? "" : "hidden"}`} size={24} color="#10B981" />
-              <BiLoaderAlt className={`animate-spin ${branchNameLoading ? "" : "hidden"}`} size={24} />
+              <AiOutlineCheckCircle className={`${isBranchNameValid && !isBranchNameLoading ? "" : "hidden"}`} size={24} color="#10B981" />
+              <BiLoaderAlt className={`animate-spin ${isBranchNameLoading ? "" : "hidden"}`} size={24} />
             </div>
           </div>
           <div className="flex justify-between items-center mt-8">
@@ -137,16 +124,22 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
               className="ml-4 p-2 pl-3 bg-gray-200 rounded-md outline-none flex-grow"
               placeholder="/src/doc/swagger.yml"
               required
-              onChange={(e) => setFilePath(e.target.value)}
+              onChange={(e) =>
+                dispatch({
+                  type: "FIELD",
+                  fieldName: "filePath",
+                  payload: e.currentTarget.value,
+                })
+              }
             />
             <div className={`w-6 ml-2`}>
               <AiOutlineWarning
-                className={`${isFilePathValid !== null && !isFilePathValid && !filePathLoading ? "" : "hidden"}`}
+                className={`${isFilePathValid !== null && !isFilePathValid && !isFilePathLoading ? "" : "hidden"}`}
                 size={24}
                 color="#EF4444"
               />
-              <AiOutlineCheckCircle className={`${isFilePathValid && !filePathLoading ? "" : "hidden"}`} size={24} color="#10B981" />
-              <BiLoaderAlt className={`animate-spin ${filePathLoading ? "" : "hidden"}`} size={24} />
+              <AiOutlineCheckCircle className={`${isFilePathValid && !isFilePathLoading ? "" : "hidden"}`} size={24} color="#10B981" />
+              <BiLoaderAlt className={`animate-spin ${isFilePathLoading ? "" : "hidden"}`} size={24} />
             </div>
           </div>
         </div>

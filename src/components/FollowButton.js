@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { GET_REPOSITORIES } from "./Repositories";
+import { GET_REPOSITORIES } from "./RepositoryList";
 
 const DELETE_WEBHOOK = gql`
   mutation CreateDraftMutation($data: DeleteWebhookInput!) {
