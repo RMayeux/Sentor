@@ -7,7 +7,6 @@ import Link from "next/link";
 
 export const NavBar = ({ session }) => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const toggleMenuIsOpen = () => setMenuIsOpen((current) => !current);
   return (
     <div className="fixed min-h-screen md:flex z-10">
