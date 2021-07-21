@@ -24,14 +24,9 @@ export const RepositoryList = () => {
     }
   }, [data]);
 
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
+  if (loading) return <h2>Loading...</h2>;
 
-  if (error) {
-    console.error(error);
-    return null;
-  }
+  if (error) return null;
 
   const RepositoriesComponent = ({ repositories }) => {
     return repositories.map((repository) => <Repository key={repository.id} repository={repository} />);

@@ -65,7 +65,7 @@ export const NavBar = ({ session }) => {
           <div className="flex flex-col">
             <div className="flex justify-center">
               <button className="m-auto rounded-full text-gray-400 hover:text-white focus:outline-none">
-                <span className="sr-only">View notifications</span>
+                <span className="sr-only">Enable/Disable dark mode</span>
                 <FaMoon size={24} />
               </button>
             </div>
