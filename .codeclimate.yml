@@ -25,3 +25,5 @@ exclude_paths:
   - .next/
   - .gitattributes
   - cypress/
+  - prisma/
+  - apollo-client.js

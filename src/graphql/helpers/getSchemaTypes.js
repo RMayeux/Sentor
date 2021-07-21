@@ -16,7 +16,7 @@ const getSchemaTypesProps = (type) => {
   glob.sync(path.resolve(`src/api/**/${type}.js`)).forEach((module) => {
     const modulePath = module.slice(module.indexOf("api"));
     const { default: prop } = require(`../../${modulePath}`);
-    if (typeof prop === "array") prop && (props = [...props, ...prop]);
+    if (Array.isArray(prop)) prop && (props = [...props, ...prop]);
 
     prop && (props = [...props, prop]);
   });
