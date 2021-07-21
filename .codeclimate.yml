@@ -1,0 +1,30 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - javascript
+  eslint:
+    enabled: true
+    channel: "eslint-7"
+    config:
+      config: /.eslintrc
+    checks:
+      import/extensions:
+        enabled: false
+      prettier/prettier:
+        enabled: false
+  fixme:
+    enabled: true
+ratings:
+  paths:
+    - "**.js"
+    - "**.jsx"
+exclude_paths:
+  - node_modules/
+  - .next/
+  - .gitattributes
+  - cypress/
+  - prisma/
+  - apollo-client.js

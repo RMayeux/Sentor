@@ -5,7 +5,7 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 export const getSwaggerFromRepositoryResolver = async ({ session }, { repositoryName, branchName, filePath }) => {
   let response;
   if (filePath[0] !== "/") filePath = `/${filePath}`;
-  console.log({ filePath });
+  
   try {
     response = await getContent(session.user.name, repositoryName, branchName, filePath);
   } catch (e) {

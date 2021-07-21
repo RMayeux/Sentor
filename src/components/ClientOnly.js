@@ -5,8 +5,8 @@ export function ClientOnly({ children, ...delegated }) {
   React.useEffect(() => {
     setHasMounted(true);
   }, []);
-  if (!hasMounted) {
-    return null;
-  }
+  
+  if (!hasMounted) return null;
+  
   return <div {...delegated}>{children}</div>;
 }
