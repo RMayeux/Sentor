@@ -71,6 +71,8 @@ model Webhook {
   repositoryId Int       @unique
   createdAt    DateTime  @default(now()) @map(name: "created_at")
   updatedAt    DateTime  @default(now()) @map(name: "updated_at")
+  branchName   String
+  filePath     String
 
   @@map(name: "webhooks")
 }

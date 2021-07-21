@@ -9,8 +9,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/helpers/*": ["src/lib/helpers/*"],
       "@/styles/*": ["src/styles/*"],
-      "@/images/*": ["src/assets/images"],
-      "@/apollo-client": ["appolo-client.js"]
+      "@/reducers/*": ["src/reducers/*"]
+
     }
   }
 }
