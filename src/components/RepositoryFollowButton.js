@@ -2,6 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { GET_REPOSITORIES } from "./RepositoryList";
 import { BiLoaderAlt } from "react-icons/bi";
 import { toast } from "react-toastify";
+import { repositoryFollowButtonAction } from "src/actions/repositoryFollowButtonAction";
 
 const DELETE_WEBHOOK = gql`
   mutation CreateDraftMutation($data: DeleteWebhookInput!) {
@@ -19,18 +20,9 @@ export const RepositoryFollowButton = ({ repository, toggleIsSetUpModalHidden })
     awaitRefetchQueries: true,
   });
 
-  const buttonAction = () => {
-    if (repository.hasWebhook)
-      return deleteWebhook({ variables: { data: { repositoryId: repository.id, repositoryName: repository.name } } }).then(() =>
-        toast.success("Project unfollowed", { autoClose: 2000 })
-      );
-    
-    return toggleIsSetUpModalHidden(true);
-  };
-
   return (
     <button
-      onClick={() => buttonAction()}
+      onClick={() => repositoryFollowButtonAction(repository, deleteWebhook, toggleIsSetUpModalHidden)}
       className={`w-24 h-12 ${
         repository.hasWebhook ? "bg-red-500" : "bg-gray-600"
       } rounded-md self-end absolute right-2 top-2 text-white flex justify-center items-center`}
