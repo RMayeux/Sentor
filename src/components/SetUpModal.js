@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { SetUpModalReducer, SetUpModalInitialState } from "@/reducers/SetUpModalReducer";
-import { branchNameAction } from "src/actions/SetUpModalActions";
+import { branchNameAction } from "src/actions/branchNameAction";
 import { filePathAction } from "src/actions/filePathAction";
 import { SetUpModalInput } from "./SetUpModalInput";
 import { SetUpModalButton } from "./SetUpModalButton";
@@ -41,14 +41,14 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
         <SetUpModalInput
           dispatch={dispatch}
           onChangeFieldName="branchName"
-          label="Branch name"
+          inputlabel="Branch name"
           isValid={isBranchNameValid}
           isLoading={isBranchNameLoading}
         />
         <SetUpModalInput
           dispatch={dispatch}
           onChangeFieldName="filePath"
-          label="File path"
+          inputlabel="File path"
           isValid={isFilePathValid}
           isLoading={isFilePathLoading}
         />
