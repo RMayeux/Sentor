@@ -25,7 +25,7 @@ export const FollowButton = ({ repository, toggleIsSetUpModalHidden }) => {
   };
 
   return (
-    <button onClick={() => webhookAction()} className="w-24 h-12 bg-gray-300 rounded-md self-end absolute right-2 top-2">
+    <button onClick={() => webhookAction()} className="w-24 h-12 bg-gray-600 rounded-md self-end absolute right-2 top-2 text-white">
       {repository.hasWebhook ? "Unfollow" : "Set up"}
     </button>
   );

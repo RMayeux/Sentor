@@ -151,15 +151,14 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
           </div>
         </div>
         <button
-          className="w-5/6 h-12 bg-gray-600 rounded-md self-center disabled:bg-gray-300 disabled:opacity-50 disabled:cursor-default"
+          className="w-5/6 h-12 bg-gray-600 rounded-md self-center disabled:bg-gray-600 disabled:opacity-60 disabled:cursor-default text-white flex justify-center items-center"
           type="submit"
           disabled={!isFilePathValid || !isBranchNameValid || createWebhookLoading}
           onClick={() =>
             createWebhook({ variables: { data: { repositoryId: repository.id, repositoryName: repository.name, branchName, filePath } } })
           }
         >
-          <BiLoaderAlt className={`animate-spin ${createWebhookLoading ? "" : "hidden"}`} size={24} />
-          Let&apos;s go
+          {createWebhookLoading ? <BiLoaderAlt className={`animate-spin ${createWebhookLoading ? "" : "hidden"}`} size={24} /> : "Let's go"}
         </button>
       </div>
     </div>
