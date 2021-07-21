@@ -13,22 +13,24 @@ const DELETE_WEBHOOK = gql`
   }
 `;
 
-export const FollowButton = ({ repository, toggleIsSetUpModalHidden }) => {
-  const mutationConfig = {
+export const RepositoryFollowButton = ({ repository, toggleIsSetUpModalHidden }) => {
+  const [deleteWebhook, { loading }] = useMutation(DELETE_WEBHOOK, {
     refetchQueries: [{ query: GET_REPOSITORIES }],
     awaitRefetchQueries: true,
-  };
-  const [deleteWebhook, { loading }] = useMutation(DELETE_WEBHOOK, mutationConfig);
+  });
 
-  const webhookAction = () => {
-    const body = { variables: { data: { repositoryId: repository.id, repositoryName: repository.name } } };
-    if (repository.hasWebhook) deleteWebhook(body).then(() => toast.success("Project unfollowed", { autoClose: 2000 }));
-    else toggleIsSetUpModalHidden(true);
+  const buttonAction = () => {
+    if (repository.hasWebhook)
+      return deleteWebhook({ variables: { data: { repositoryId: repository.id, repositoryName: repository.name } } }).then(() =>
+        toast.success("Project unfollowed", { autoClose: 2000 })
+      );
+    
+    return toggleIsSetUpModalHidden(true);
   };
 
   return (
     <button
-      onClick={() => webhookAction()}
+      onClick={() => buttonAction()}
       className={`w-24 h-12 ${
         repository.hasWebhook ? "bg-red-500" : "bg-gray-600"
       } rounded-md self-end absolute right-2 top-2 text-white flex justify-center items-center`}
