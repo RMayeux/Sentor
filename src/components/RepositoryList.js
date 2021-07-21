@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import { strInclude } from "src/libs/string";
 import { Repository } from "./Repository";
 
 export const GET_REPOSITORIES = gql`
@@ -12,17 +13,16 @@ export const GET_REPOSITORIES = gql`
   }
 `;
 
-export const RepositoryList = () => {
+export const RepositoryList = ({ repositoryNameFilter }) => {
   const { data, loading, error } = useQuery(GET_REPOSITORIES);
   const [hookedRepositories, setHookedRepositories] = useState([]);
   const [nonHookedRepositories, setNonHookedRepositories] = useState([]);
 
   useEffect(() => {
-    if (data) {
-      setHookedRepositories(data.repositories.filter((repository) => repository.hasWebhook));
-      setNonHookedRepositories(data.repositories.filter((repository) => !repository.hasWebhook));
-    }
-  }, [data]);
+    if (!data) return;
+    setHookedRepositories(data.repositories.filter((repo) => repo.hasWebhook && strInclude(repo.name, repositoryNameFilter)));
+    setNonHookedRepositories(data.repositories.filter((repo) => !repo.hasWebhook && strInclude(repo.name, repositoryNameFilter)));
+  }, [data, repositoryNameFilter]);
 
   if (loading) return <h2>Loading...</h2>;
 

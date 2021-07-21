@@ -1,8 +1,12 @@
 import { ClientOnly } from "@/components/ClientOnly";
 import { NavBar } from "@/components/NavBar";
 import { RepositoryList } from "@/components/RepositoryList";
+import { RepositorySearchInput } from "@/components/RepositorySearchInput";
+import { useState } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 const IndexPage = ({ session }) => {
+  const [repositoryNameFilter, setRepositoryNameFilter] = useState('');
+
   return (
     <div>
       <NavBar session={session} />
@@ -14,7 +18,8 @@ const IndexPage = ({ session }) => {
             This is the list of repositories linked to your GitHub account, press &quot;Set up&quot; to start configurating your project
           </p>
         </div>
-        <RepositoryList />
+        <RepositorySearchInput setRepositoryNameFilter={setRepositoryNameFilter} />
+        <RepositoryList repositoryNameFilter={repositoryNameFilter}/>
       </ClientOnly>
     </div>
   );
