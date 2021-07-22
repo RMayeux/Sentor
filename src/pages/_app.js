@@ -4,12 +4,15 @@ import { getSession } from "next-auth/client";
 import App from "next/app";
 import client from "../../apollo-client";
 import { ApolloProvider } from "@apollo/client";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyApp = ({ Component, pageProps }) => {
   return (
     <Provider session={pageProps.session}>
       <ApolloProvider client={client}>
         <Component {...pageProps} />
+        <ToastContainer />
       </ApolloProvider>
     </Provider>
   );

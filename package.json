@@ -13,6 +13,7 @@
     "terraform-apply": "NODE_ENV=$(grep NODE_ENV .env | cut -d '=' -f2) terraform apply"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.2",
     "@apollo/client": "3.3.20",
     "@prisma/client": "2.26.0",
     "apollo-server-errors": "^3.0.0",
@@ -29,6 +30,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
+    "react-toast-notifications": "^2.5.1",
+    "react-toastify": "^7.0.4",
     "styled-components": "^5.3.0",
     "swr": "^0.5.6",
     "vercel": "^23.0.1"
@@ -37,6 +40,7 @@
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",
     "autoprefixer": "^10.2.6",
+    "babel-eslint": "^10.1.0",
     "cypress": "^7.6.0",
     "eslint": "^7.30.0",
     "eslint-config-next": "^11.0.1",

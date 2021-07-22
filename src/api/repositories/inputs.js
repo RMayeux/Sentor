@@ -6,6 +6,8 @@ const inputs = [
     definition(t) {
       t.nonNull.int("repositoryId");
       t.nonNull.string("repositoryName");
+      t.nonNull.string("filePath");
+      t.nonNull.string("branchName");
     },
   }),
   inputObjectType({

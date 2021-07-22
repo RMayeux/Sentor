@@ -33,3 +33,23 @@ export const deleteWebhookForRepository = async (userName, repoName, webhookId, 
   };
   await axios(options);
 };
+
+export const getBranchesForRepository = async (userName, repoName) => {
+  const url = `${githubApiUrl}/repos/${userName}/${repoName}/branches`;
+  const options = {
+    url,
+    method: "GET",
+  };
+  const response = await axios(options);
+  return response.data;
+};
+
+export const getContent = async (userName, repoName, branchName, filePath) => {
+  const url = `https://raw.githubusercontent.com/${userName}/${repoName}/${branchName}${filePath}`;
+  const options = {
+    url,
+    method: "GET",
+  };
+  const response = await axios(options);
+  return response;
+};

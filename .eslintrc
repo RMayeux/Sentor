@@ -1,7 +1,17 @@
 {
-  "extends": ["plugin:react/recommended", "next", "prettier", "eslint:recommended"],
+  "extends": ["next", "prettier", "eslint:recommended"],
   "env": {
     "node": true,
     "es6": true
+  },
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2020
   }
 }
