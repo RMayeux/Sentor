@@ -106,11 +106,15 @@ workflows:
           path: ./terraform/prod
           checkout: true
           persist-workspace: true
+          var_file: ./terraform/prod/terraform.tfvars
+          var: aws_access_key=$AWS_ACCESS_KEY_ID, aws_secret_key=$AWS_SECRET_KEY
           requires:
             - terraform/validate
       - terraform/apply:
           path: ./terraform/prod
           attach-workspace: true
+          var_file: ./terraform/prod/terraform.tfvars
+          var: aws_access_key=$AWS_ACCESS_KEY_ID, aws_secret_key=$AWS_SECRET_KEY
           filters:
             branches:
               only: main
