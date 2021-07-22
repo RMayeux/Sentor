@@ -95,17 +95,21 @@ workflows:
   deploy_infrastructure:
     jobs:
       - terraform/fmt:
+          path: ./terraform/prod
           checkout: true
       - terraform/validate:
+          path: ./terraform/prod
           checkout: true
           requires:
             - terraform/fmt
       - terraform/plan:
+          path: ./terraform/prod
           checkout: true
           persist-workspace: true
           requires:
             - terraform/validate
       - terraform/apply:
+          path: ./terraform/prod
           attach-workspace: true
           filters:
             branches:
