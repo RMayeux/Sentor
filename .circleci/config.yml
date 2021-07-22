@@ -5,6 +5,7 @@ defaults: &defaults
     - image: circleci/node:latest
 orbs:
   cypress: cypress-io/cypress@1
+  terraform: circleci/terraform@2.1.0
 jobs:
   checkout_code:
     <<: *defaults
@@ -83,15 +84,39 @@ workflows:
       - build:
           requires:
             - bundle_dependencies
-      - cypress/install:
-          yarn: true
       - cypress/run:
           yarn: true
-          requires:
-            - cypress/install
       - perf:
           requires:
             - build
           filters:
             branches:
               ignore: /develop|master/
+  deploy_infrastructure:
+    jobs:
+      - terraform/fmt:
+          path: ./terraform/prod
+          checkout: true
+      - terraform/validate:
+          path: ./terraform/prod
+          checkout: true
+          requires:
+            - terraform/fmt
+      - terraform/plan:
+          path: ./terraform/prod
+          checkout: true
+          persist-workspace: true
+          var_file: ./terraform/prod/terraform.tfvars
+          var: aws_access_key=$AWS_ACCESS_KEY_ID, aws_secret_key=$AWS_SECRET_KEY
+          requires:
+            - terraform/validate
+      - terraform/apply:
+          path: ./terraform/prod
+          attach-workspace: true
+          var_file: ./terraform/prod/terraform.tfvars
+          var: aws_access_key=$AWS_ACCESS_KEY_ID, aws_secret_key=$AWS_SECRET_KEY
+          filters:
+            branches:
+              only: main
+          requires:
+            - terraform/plan

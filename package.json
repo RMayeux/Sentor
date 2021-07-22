@@ -9,7 +9,8 @@
     "lint": "next lint",
     "prepare": "husky install",
     "test": "cypress run",
-    "seeds": "node ./prisma/seed.js"
+    "seeds": "node ./prisma/seed.js",
+    "terraform-apply": "NODE_ENV=$(grep NODE_ENV .env | cut -d '=' -f2) terraform apply"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.0.2",
@@ -53,6 +54,7 @@
     "tailwindcss": "^2.2.4"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "prettier --write --ignore-unknown",
+    "*.js": "eslint src --fix"
   }
 }
