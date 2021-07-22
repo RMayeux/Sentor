@@ -9,7 +9,8 @@
     "lint": "next lint",
     "prepare": "husky install",
     "test": "cypress run",
-    "seeds": "node ./prisma/seed.js"
+    "seeds": "node ./prisma/seed.js",
+    "terraform-apply": "NODE_ENV=$(grep NODE_ENV .env | cut -d '=' -f2) terraform apply"
   },
   "dependencies": {
     "@apollo/client": "3.3.20",

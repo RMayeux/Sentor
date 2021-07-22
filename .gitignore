@@ -38,3 +38,16 @@ yarn-error.log*
 
 # vscode
 /.vscode/
+
+#terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+terraform/dev/terraform.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc

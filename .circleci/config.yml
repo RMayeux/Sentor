@@ -5,6 +5,7 @@ defaults: &defaults
     - image: circleci/node:latest
 orbs:
   cypress: cypress-io/cypress@1
+  terraform: "circleci/terraform@dev:alpha"
 jobs:
   checkout_code:
     <<: *defaults
@@ -95,3 +96,31 @@ workflows:
           filters:
             branches:
               ignore: /develop|master/
+  deploy_infrastructure:
+    jobs:
+      - terraform/fmt:
+          path: ./terraform/prod
+          checkout: true
+          context: terraform
+      - terraform/validate:
+          path: ./terraform/prod
+          checkout: true
+          context: terraform
+          requires:
+            - terraform/fmt
+      - terraform/plan:
+          path: ./terraform/prod
+          checkout: true
+          context: terraform
+          persist-workspace: true
+          requires:
+            - terraform/validate
+      - terraform/apply:
+          path: ./terraform/prod
+          attach-workspace: true
+          context: terraform
+          filters:
+            branches:
+              only: main
+          requires:
+            - terraform/plan
