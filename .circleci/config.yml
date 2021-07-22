@@ -5,7 +5,7 @@ defaults: &defaults
     - image: circleci/node:latest
 orbs:
   cypress: cypress-io/cypress@1
-  terraform: "circleci/terraform@1.1.0"
+  terraform: "circleci/terraform@2.1.0"
 jobs:
   checkout_code:
     <<: *defaults
@@ -84,12 +84,8 @@ workflows:
       - build:
           requires:
             - bundle_dependencies
-      - cypress/install:
-          yarn: true
       - cypress/run:
           yarn: true
-          requires:
-            - cypress/install
       - perf:
           requires:
             - build
