@@ -15,13 +15,14 @@ export const branchNameAction = (branchName, repository, branches, dispatch) => 
 
   dispatch({ type: "BRANCH_NAME_CHECK_IN_PROGRESS" });
 
-  return delayBounceFn(() => {
-    if (!branches) {
-      client
-        .query({ query: GET_BRANCHES, variables: { repositoryName: repository.name } })
-        .then(({ data }) => dispatch({ type: "BRANCHES_INIT", data }));
-    }
+  if (!branches) {
+    return client.query({ query: GET_BRANCHES, variables: { repositoryName: repository.name } }).then(({ data }) => {
+      dispatch({ type: "BRANCHES_INIT", data });
+    });
+  }
 
+  return delayBounceFn(() => {
+    console.log({ branches });
     dispatch({ type: "BRANCH_NAME_CHECK" });
   }, 1000);
-}
+};
