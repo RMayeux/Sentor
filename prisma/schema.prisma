@@ -66,7 +66,7 @@ model VerificationRequest {
 }
 
 model Webhook {
-  id           Int    @id
+  id           String    @default(uuid()) @id
   userId       String    @map(name: "user_id")
   repositoryId Int       @unique
   createdAt    DateTime  @default(now()) @map(name: "created_at")
@@ -75,4 +75,15 @@ model Webhook {
   filePath     String
 
   @@map(name: "webhooks")
+}
+
+model OpenApi {
+  id           String    @default(uuid()) @id
+  userId       String    @map(name: "user_id")
+  repositoryId Int       @unique
+  createdAt    DateTime  @default(now()) @map(name: "created_at")
+  updatedAt    DateTime  @default(now()) @map(name: "updated_at")
+  version      Int       @default(1)
+
+  @@map(name: "open_apis")
 }

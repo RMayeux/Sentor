@@ -56,11 +56,25 @@ CREATE TABLE "verification_requests" (
 
 -- CreateTable
 CREATE TABLE "webhooks" (
-    "id" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "repositoryId" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "branchName" TEXT NOT NULL,
+    "filePath" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "open_apis" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "repositoryId" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "version" INTEGER NOT NULL DEFAULT 1,
 
     PRIMARY KEY ("id")
 );
@@ -97,3 +111,6 @@ CREATE UNIQUE INDEX "verification_requests.token_unique" ON "verification_reques
 
 -- CreateIndex
 CREATE UNIQUE INDEX "webhooks.repositoryId_unique" ON "webhooks"("repositoryId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "open_apis.repositoryId_unique" ON "open_apis"("repositoryId");
