@@ -1,5 +1,6 @@
 import { getFileBuffer } from "src/libs/github";
 import { s3GetObject, s3PutObject } from "src/libs/aws/s3";
+import isEqual from "lodash.isequal";
 
 const openApiBucket = process.env.BUCKET_OPEN_API;
 
@@ -18,9 +19,11 @@ const createOpenApi = async (newOpenApiFileBuffer, repositoryId, userId, prisma)
 
 const updateOpenApi = async (openApi, repositoryId, newOpenApiFileBuffer, prisma) => {
   const openApiFileBuffer = await s3GetObject(openApiBucket, `${openApi.repositoryId}/openApi-${openApi.version}.json`);
-  if (openApiFileBuffer === newOpenApiFileBuffer) return;
+  const openApiFileContent = JSON.parse(openApiFileBuffer.Body.toString("utf-8"));
+  const newOpenApiFileContent = JSON.parse(newOpenApiFileBuffer.toString("utf-8"));
+  if (isEqual(openApiFileContent, newOpenApiFileContent)) return;
   return Promise.all([
-    await s3PutObject(openApiFileBuffer, openApiBucket, `${repositoryId}/openApi-${openApi.version + 1}.json`),
+    await s3PutObject(newOpenApiFileBuffer, openApiBucket, `${repositoryId}/openApi-${openApi.version + 1}.json`),
     prisma.openApi.update({
       where: {
         id: openApi.id,
