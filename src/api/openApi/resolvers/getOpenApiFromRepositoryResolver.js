@@ -13,11 +13,5 @@ export const getOpenApiFromRepositoryResolver = async ({ session }, { repository
     throw new ApolloError(e.response.statusText, "ERROR", {});
   }
 
-  try {
-    await SwaggerParser.validate(response.data);
-  } catch (error) {
-    throw new ApolloError(error, "ERROR", {});
-  }
-
-  return {};
+  await SwaggerParser.validate(response.data);
 };
