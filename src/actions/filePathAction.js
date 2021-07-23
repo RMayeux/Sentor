@@ -3,10 +3,9 @@ import client from "../../apollo-client";
 import { gql } from "@apollo/client";
 
 export const GET_SWAGGER = gql`
-  query swaggerFromRepository($repositoryName: String!, $filePath: String!, $branchName: String!) {
-    swaggerFromRepository(repositoryName: $repositoryName, branchName: $branchName, filePath: $filePath) {
+  query openApiFromRepository($repositoryName: String!, $filePath: String!, $branchName: String!) {
+    openApiFromRepository(repositoryName: $repositoryName, branchName: $branchName, filePath: $filePath) {
       content
-      error
     }
   }
 `;
@@ -23,4 +22,4 @@ export const filePathAction = (filePath, branchName, isBranchNameValid, dispatch
         dispatch({ type: "FILE_PATH_CHECK", data });
       });
   }, 1000);
-}
+};
