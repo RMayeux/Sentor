@@ -7,7 +7,7 @@ export const Repository = ({ repository }) => {
   const toggleIsSetUpModalHidden = () => setIsSetUpModalHidden((current) => !current);
   return (
     <>
-      <li className="h-16 flex items-center bg-gray-100 rounded-md	w-full m-4 border border-gray-400 relative">
+      <li className="h-16 flex items-center w-full relative ">
         <h3 className="ml-4 text-lg">{repository.name}</h3>
         <RepositoryFollowButton repository={repository} toggleIsSetUpModalHidden={toggleIsSetUpModalHidden} />
       </li>

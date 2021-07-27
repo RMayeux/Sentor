@@ -2,10 +2,9 @@ import { ApolloError } from "apollo-server-errors";
 import { getContent } from "src/libs/github";
 import SwaggerParser from "@apidevtools/swagger-parser";
 
-export const getSwaggerFromRepositoryResolver = async ({ session }, { repositoryName, branchName, filePath }) => {
+export const getOpenApiFromRepositoryResolver = async ({ session }, { repositoryName, branchName, filePath }) => {
   let response;
-  if (filePath[0] !== "/") filePath = `/${filePath}`;
-  
+
   try {
     response = await getContent(session.user.name, repositoryName, branchName, filePath);
   } catch (e) {
@@ -14,11 +13,7 @@ export const getSwaggerFromRepositoryResolver = async ({ session }, { repository
     throw new ApolloError(e.response.statusText, "ERROR", {});
   }
 
-  try {
-    await SwaggerParser.validate(response.data);
-  } catch (error) {
-    throw new ApolloError(error, "ERROR", {});
-  }
+  await SwaggerParser.validate(response.data);
 
   return {
     content: JSON.stringify(response.data),

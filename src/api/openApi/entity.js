@@ -1,10 +1,10 @@
 import { objectType } from "nexus";
-const Swagger = objectType({
-  name: "Swagger",
+const OpenApi = objectType({
+  name: "OpenApi",
   definition(t) {
     t.string("content");
     t.string("error");
   },
 });
 
-export default Swagger;
+export default OpenApi;

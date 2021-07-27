@@ -7,6 +7,7 @@ export const getSchemaTypes = () => {
     getSchemaTypesProps("mutations"),
     getSchemaTypesProps("inputs"),
     getSchemaTypesProps("entity"),
+    getSchemaTypesProps("subscriptions"),
   ];
 };
 

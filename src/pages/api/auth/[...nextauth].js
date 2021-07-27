@@ -21,21 +21,10 @@ const options = {
         };
       },
     }),
-    Providers.Email({
-      server: {
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      },
-      from: process.env.SMTP_FROM, // The "from" address that you want to use
-    }),
   ],
   callbacks: {
     session: async (session, user) => {
-      session.id = user.id;
+      session.userId = user.id;
       return Promise.resolve(session);
     },
   },

@@ -4,7 +4,7 @@ import { getRepositories } from "src/libs/github";
 export const getRepositoriesResolver = async ({ session, prisma }) => {
   try {
     const [webhooks, repositories] = await Promise.all([
-      prisma.webhook.findMany({ where: { userId: session.id } }),
+      prisma.webhook.findMany({ where: { userId: session.userId } }),
       getRepositories(session.user.name),
     ]);
 

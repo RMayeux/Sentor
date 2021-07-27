@@ -45,6 +45,8 @@ export const getBranchesForRepository = async (userName, repoName) => {
 };
 
 export const getContent = async (userName, repoName, branchName, filePath) => {
+  if (filePath[0] !== "/") filePath = `/${filePath}`;
+
   const url = `https://raw.githubusercontent.com/${userName}/${repoName}/${branchName}${filePath}`;
   const options = {
     url,
@@ -52,4 +54,9 @@ export const getContent = async (userName, repoName, branchName, filePath) => {
   };
   const response = await axios(options);
   return response;
+};
+
+export const getFileBuffer = async (userName, repoName, branchName, filePath) => {
+  const fileContent = await getContent(userName, repoName, branchName, filePath);
+  return Buffer.from(JSON.stringify(fileContent.data));
 };
