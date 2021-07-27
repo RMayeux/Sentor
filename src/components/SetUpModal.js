@@ -21,19 +21,15 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
   return (
     <div
       className={`${isHidden ? "hidden" : ""} fixed left-0 bottom-0 top-0 right-0 flex justify-center items-center z-10 pb-40`}
-      style={{ background: "rgba(0,0,0,0.9)" }}
+      style={{ background: "rgba(0,0,0,0.95)" }}
       onClick={() => toggleIsSetUpModalHidden()}
     >
-      <div
-        className={`w-1/4 h-1/2 rounded-xl px-8 flex flex-col justify-evenly relative`}
-        style={{ background: "rgba(255,255,255,1)" }}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={`w-1/4 h-1/2 rounded-xl px-8 flex flex-col justify-evenly relative bg-gray-900`} onClick={(e) => e.stopPropagation()}>
         <AiOutlineClose size={24} className="absolute right-4 top-4 cursor-pointer" onClick={() => toggleIsSetUpModalHidden()} />
 
         <div className="">
-          <h3 className="text-xl font-semibold">Setting up your project</h3>
-          <p className="font-light text-sm mt-2">
+          <h3 className="text-xl font-semibold text-white">Setting up your project</h3>
+          <p className="font-light text-sm mt-2 text-white">
             Select the branch to watch and the path where the swagger file is stocked in the repository
           </p>
         </div>

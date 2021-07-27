@@ -24,7 +24,7 @@ export const RepositoryFollowButton = ({ repository, toggleIsSetUpModalHidden })
       onClick={() => repositoryFollowButtonAction(repository, deleteWebhook, toggleIsSetUpModalHidden)}
       className={`w-24 h-12 ${
         repository.hasWebhook ? "bg-red-500" : "bg-gray-600"
-      } rounded-md self-end absolute right-2 top-2 text-white flex justify-center items-center`}
+      } rounded-md self-end absolute right-2 top-2 text-white flex justify-center items-center mr-2`}
     >
       {loading ? <BiLoaderAlt className="animate-spin" size={24} /> : repository.hasWebhook ? "Unfollow" : "Set up"}
     </button>

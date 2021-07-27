@@ -10,19 +10,19 @@ export const NavBar = ({ session }) => {
   const toggleMenuIsOpen = () => setMenuIsOpen((current) => !current);
   return (
     <div className="fixed min-h-screen md:flex z-10">
-      <div className="bg-gray-700 text-gray-100 flex justify-between md:hidden">
+      <div className="bg-gray-900 text-gray-100 flex justify-between md:hidden">
         <a href="#" className="block p-4 text-white font-bold">
           Better Dev
         </a>
 
-        <button className="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
+        <button className="mobile-menu-button p-4 focus:outline-none focus:bg-gray-900">
           <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
 
-      <div className="sidebar bg-gray-700 text-blue-100 w-24 space-y-6 x-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+      <div className="sidebar bg-gray-900 text-blue-100 w-24 space-y-6 x-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
         <nav className="flex flex-col justify-between h-screen align-center py-4">
           <div className=" divide-y border-gray-400">
             <div className="relative flex flex-col items-center">

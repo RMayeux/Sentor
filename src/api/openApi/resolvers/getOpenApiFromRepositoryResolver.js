@@ -14,4 +14,8 @@ export const getOpenApiFromRepositoryResolver = async ({ session }, { repository
   }
 
   await SwaggerParser.validate(response.data);
+
+  return {
+    content: JSON.stringify(response.data),
+  };
 };

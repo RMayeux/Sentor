@@ -33,10 +33,8 @@ export const RepositoryList = ({ repositoryNameFilter }) => {
   };
 
   return (
-    <ul className="w-5/6 mt-4 ml-12">
-      {hookedRepositories.length > 0 && <h2 className="text-xl">Followed Repositories</h2>}
+    <ul className="divide-y divide-gray-300 py-2 px-1 shadow-lg flex-grow">
       <RepositoriesComponent repositories={hookedRepositories} />
-      {nonHookedRepositories.length > 0 && <h2 className="text-xl">Availables Repositories</h2>}
       <RepositoriesComponent repositories={nonHookedRepositories} />
     </ul>
   );

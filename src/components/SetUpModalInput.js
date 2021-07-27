@@ -5,9 +5,9 @@ export const SetUpModalInput = ({ dispatch, onChangeFieldName, inputlabel, isVal
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center relative">
-        <label className="w-24">{inputlabel}</label>
+        <label className="w-24 text-white">{inputlabel}</label>
         <input
-          className="ml-4 p-2 pl-3 bg-gray-200 rounded-md outline-none flex-grow border border-gray-300"
+          className="ml-4 pl-1 outline-none flex-grow border-b border-gray-200 bg-transparent text-white"
           placeholder="main"
           required
           onChange={(e) =>
