@@ -40,6 +40,7 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
           inputlabel="Branch name"
           isValid={isBranchNameValid}
           isLoading={isBranchNameLoading}
+          placeholder="main"
         />
         <SetUpModalInput
           dispatch={dispatch}
@@ -47,6 +48,7 @@ export const SetUpModal = ({ repository, isHidden, toggleIsSetUpModalHidden }) =
           inputlabel="File path"
           isValid={isFilePathValid}
           isLoading={isFilePathLoading}
+          placeholder="/doc/openapi.json"
         />
         <SetUpModalButton
           isFilePathValid={isFilePathValid}

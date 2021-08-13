@@ -25,13 +25,17 @@ export const createWebhookForRepository = async (userName, repoName, token) => {
 };
 
 export const deleteWebhookForRepository = async (userName, repoName, webhookId, token) => {
-  const url = `${githubApiUrl}/repos/${userName}/${repoName}/hooks/${webhookId}`;
-  const options = {
-    headers: { Authorization: `token ${token}` },
-    url,
-    method: "DELETE",
-  };
-  await axios(options);
+  try {
+    const url = `${githubApiUrl}/repos/${userName}/${repoName}/hooks/${webhookId}`;
+    const options = {
+      headers: { Authorization: `token ${token}` },
+      url,
+      method: "DELETE",
+    };
+    await axios(options);
+  } catch (e) {
+    console.log({ e });
+  }
 };
 
 export const getBranchesForRepository = async (userName, repoName) => {
@@ -59,4 +63,18 @@ export const getContent = async (userName, repoName, branchName, filePath) => {
 export const getFileBuffer = async (userName, repoName, branchName, filePath) => {
   const fileContent = await getContent(userName, repoName, branchName, filePath);
   return Buffer.from(JSON.stringify(fileContent.data));
+};
+
+export const getWebhookByUrl = async (userName, repoName, token) => {
+  const url = `${githubApiUrl}/repos/${userName}/${repoName}/hooks`;
+  const options = {
+    url,
+    method: "GET",
+    headers: { Authorization: `token ${token}` },
+  };
+  const response = await axios(options);
+
+  return response.data.find((webhook) => {
+    webhook.config.url = process.env.WEBHOOK_GITHUB;
+  });
 };
