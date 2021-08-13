@@ -11,9 +11,9 @@ generator client {
 }
 
 model Account {
-  id                 String    @default(uuid()) @id 
+  id                 String    @id @default(uuid())
   compoundId         String    @unique @map(name: "compound_id")
-  userId             String    @map(name: "user_id") @unique
+  userId             String    @unique @map(name: "user_id")
   providerType       String    @map(name: "provider_type")
   providerId         String    @map(name: "provider_id")
   providerAccountId  String    @map(name: "provider_account_id")
@@ -22,16 +22,16 @@ model Account {
   accessTokenExpires DateTime? @map(name: "access_token_expires")
   createdAt          DateTime  @default(now()) @map(name: "created_at")
   updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+
   @@index([providerAccountId], name: "providerAccountId")
   @@index([providerId], name: "providerId")
   @@index([userId], name: "userId")
-
   @@map(name: "accounts")
 }
 
 model Session {
-  id           String   @default(uuid()) @id
-  userId       String   @map(name: "user_id") @unique
+  id           String   @id @default(uuid())
+  userId       String   @unique @map(name: "user_id")
   expires      DateTime
   sessionToken String   @unique @map(name: "session_token")
   accessToken  String   @unique @map(name: "access_token")
@@ -42,7 +42,7 @@ model Session {
 }
 
 model User {
-  id            String    @default(uuid()) @id
+  id            String    @id @default(uuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime? @map(name: "email_verified")
@@ -55,35 +55,52 @@ model User {
 }
 
 model VerificationRequest {
-  id         String    @default(uuid()) @id
+  id         String   @id @default(uuid())
   identifier String
-  token      String    @unique
+  token      String   @unique
   expires    DateTime
-  createdAt  DateTime  @default(now()) @map(name: "created_at")
-  updatedAt  DateTime  @default(now()) @map(name: "updated_at")
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
 
   @@map(name: "verification_requests")
 }
 
-model Webhook {
-  id           Int       @id
-  userId       String    @map(name: "user_id")
-  repositoryId Int       @unique
-  createdAt    DateTime  @default(now()) @map(name: "created_at")
-  updatedAt    DateTime  @default(now()) @map(name: "updated_at")
-  branchName   String
-  filePath     String
+model Repository {
+  id         Int       @id
+  webhookId  Int       @unique
+  userId     String    @map(name: "user_id")
+  createdAt  DateTime  @default(now()) @map(name: "created_at")
+  updatedAt  DateTime  @default(now()) @map(name: "updated_at")
+  branchName String
+  filePath   String
+  name       String
+  enabled    Boolean
+  openApis   OpenApi[]
 
-  @@map(name: "webhooks")
+  @@map(name: "repositories")
 }
 
 model OpenApi {
-  id           String    @default(uuid()) @id
-  userId       String    @map(name: "user_id")
-  repositoryId Int       @unique
-  createdAt    DateTime  @default(now()) @map(name: "created_at")
-  updatedAt    DateTime  @default(now()) @map(name: "updated_at")
-  version      Int       @default(1)
+  id           String     @id @default(uuid())
+  userId       String     @map(name: "user_id")
+  repository   Repository @relation(fields: [repositoryId], references: [id])
+  repositoryId Int        @unique
+  createdAt    DateTime   @default(now()) @map(name: "created_at")
+  updatedAt    DateTime   @default(now()) @map(name: "updated_at")
+  version      Int        @default(1)
+  commits      Commit[]
 
   @@map(name: "open_apis")
+}
+
+model Commit {
+  id        Int      @id
+  message   String   @map(name: "user_id")
+  author    Int      @unique
+  openApi   OpenApi  @relation(fields: [openApiId], references: [id])
+  openApiId String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "commits")
 }

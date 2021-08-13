@@ -55,14 +55,16 @@ CREATE TABLE "verification_requests" (
 );
 
 -- CreateTable
-CREATE TABLE "webhooks" (
-    "id" TEXT NOT NULL,
+CREATE TABLE "repositories" (
+    "id" INTEGER NOT NULL,
+    "webhookId" INTEGER NOT NULL,
     "user_id" TEXT NOT NULL,
-    "repositoryId" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "branchName" TEXT NOT NULL,
     "filePath" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "enabled" BOOLEAN NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -75,6 +77,18 @@ CREATE TABLE "open_apis" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "version" INTEGER NOT NULL DEFAULT 1,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "commits" (
+    "id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "author" INTEGER NOT NULL,
+    "openApiId" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -110,7 +124,16 @@ CREATE UNIQUE INDEX "users.email_unique" ON "users"("email");
 CREATE UNIQUE INDEX "verification_requests.token_unique" ON "verification_requests"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "webhooks.repositoryId_unique" ON "webhooks"("repositoryId");
+CREATE UNIQUE INDEX "repositories.webhookId_unique" ON "repositories"("webhookId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "open_apis.repositoryId_unique" ON "open_apis"("repositoryId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "commits.author_unique" ON "commits"("author");
+
+-- AddForeignKey
+ALTER TABLE "open_apis" ADD FOREIGN KEY ("repositoryId") REFERENCES "repositories"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "commits" ADD FOREIGN KEY ("openApiId") REFERENCES "open_apis"("id") ON DELETE CASCADE ON UPDATE CASCADE;
