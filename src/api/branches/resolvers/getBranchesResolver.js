@@ -1,5 +1,5 @@
 import { getBranchesForRepository } from "src/libs/github";
 
-export const getBranchesResolver = async ({ session }, { repositoryName }) => {
-  return getBranchesForRepository(session.user.name, repositoryName);
+export const getBranchesResolver = async ({ repositoryName }) => {
+  return getBranchesForRepository(repositoryName);
 };

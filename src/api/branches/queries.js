@@ -9,7 +9,7 @@ const repositoryQueries = extendType({
         repositoryName: stringArg(),
       },
       type: "Branch",
-      resolve: async (_parent, args, context) => getBranchesResolver(context, args),
+      resolve: async (_parent, args) => getBranchesResolver(args),
     });
   },
 });

@@ -11,7 +11,7 @@ const openApiQueries = extendType({
         filePath: stringArg(),
         branchName: stringArg(),
       },
-      resolve: async (_parent, args, context) => getOpenApiFromRepositoryResolver(context, args),
+      resolve: async (_parent, args) => getOpenApiFromRepositoryResolver(args),
     });
   },
 });

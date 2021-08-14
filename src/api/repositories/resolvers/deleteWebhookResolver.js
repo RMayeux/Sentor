@@ -8,6 +8,6 @@ export const deleteWebhookResolver = async ({ prisma, session }, { repositoryId:
 
   await Promise.all([
     prisma.repository.update({ where: { id }, data: { enabled: false } }),
-    deleteWebhookForRepository(session.user.name, repositoryName, repository.id, account.accessToken),
+    deleteWebhookForRepository(repositoryName, repository.id, account.accessToken),
   ]);
 };

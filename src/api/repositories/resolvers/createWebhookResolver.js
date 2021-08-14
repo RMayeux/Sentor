@@ -8,29 +8,30 @@ export const createWebhookResolver = async ({ session, prisma }, { repositoryId,
 
   if (repository?.enabled) throw new ApolloError("Webhook for this repository has already been created", "409");
 
-  const [account, openApi] = await Promise.all([prisma.account.findUnique({ where: { userId } }), prisma.openApi.findFirst()]);
+  const openApi = repository ? await prisma.openApi.findFirst({ where: { repositoryId: repository.id } }) : null;
+  const account = await prisma.account.findUnique({ where: { userId } });
 
   const newRepository = {
     id: repositoryId,
     userId,
-    filePath,
+    filePath: filePath[0] === "/" ? filePath.substring(1) : filePath,
     branchName,
     name: repositoryName,
     enabled: true,
   };
 
-  let webhookId;
   // Creating Webhook in GitHub
+  let webhookId;
   try {
-    let response = await createWebhookForRepository(session.user.name, repositoryName, account.accessToken);
+    let response = await createWebhookForRepository(repositoryName, account.accessToken);
     webhookId = response.id;
   } catch (e) {
-    if (e.response.status == "429") {
-      const webhook = await getWebhookByUrl(session.user.name, repositoryName, account.accessToken);
+    if (e.response.status === 422) {
+      const webhook = await getWebhookByUrl(repositoryName, account.accessToken);
+      console.log({ webhook });
       webhookId = webhook.id;
     }
   }
-
   // Database
   if (repository) {
     await prisma.repository.update({
@@ -38,12 +39,13 @@ export const createWebhookResolver = async ({ session, prisma }, { repositoryId,
         id: repositoryId,
       },
       data: {
-        enabled: true,
+        ...newRepository,
         webhookId,
       },
     });
   } else {
     await prisma.repository.create({ data: { ...newRepository, webhookId } });
   }
-  await registryOpenApi(openApi, session, repositoryName, prisma, newRepository);
+
+  await registryOpenApi(openApi, prisma, newRepository);
 };

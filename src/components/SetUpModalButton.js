@@ -24,9 +24,9 @@ export const SetUpModalButton = ({ isFilePathValid, isBranchNameValid, repositor
       type="submit"
       disabled={!isFilePathValid || !isBranchNameValid || createWebhookLoading}
       onClick={() =>
-        createWebhook({ variables: { data: { repositoryId: repository.id, repositoryName: repository.name, branchName, filePath } } }).then(
-          () => toast.success("Project initialized", { autoClose: 2000 })
-        )
+        createWebhook({
+          variables: { data: { repositoryId: repository.id, repositoryName: repository.full_name, branchName, filePath } },
+        }).then(() => toast.success("Project initialized", { autoClose: 2000 }))
       }
     >
       {createWebhookLoading ? <BiLoaderAlt className={`animate-spin ${createWebhookLoading ? "" : "hidden"}`} size={24} /> : "Let's go"}
