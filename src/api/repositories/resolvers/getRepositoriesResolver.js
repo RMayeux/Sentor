@@ -3,17 +3,17 @@ import { getRepositories } from "src/libs/github";
 
 export const getRepositoriesResolver = async ({ session, prisma }) => {
   try {
-    const [webhooks, repositories] = await Promise.all([
-      prisma.webhook.findMany({ where: { userId: session.userId } }),
+    const [dbRepositories, gitHubRepositories] = await Promise.all([
+      prisma.repository.findMany({ where: { userId: session.userId } }),
       getRepositories(session.user.name),
     ]);
 
-    for (const repository of repositories) {
-      repository.hasWebhook = !!webhooks.find((webhook) => repository.id === webhook.repositoryId);
+    for (const repository of gitHubRepositories) {
+      repository.hasWebhook = !!dbRepositories.find((dbRepository) => repository.id === dbRepository.id && dbRepository.enabled);
     }
-
-    return repositories;
+    return gitHubRepositories;
   } catch (e) {
+    console.log({ e });
     throw new ApolloError("Could not fetch repositories", "ERROR", {});
   }
 };

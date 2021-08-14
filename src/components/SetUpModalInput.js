@@ -1,14 +1,14 @@
 import { AiOutlineWarning, AiOutlineCheckCircle } from "react-icons/ai";
 import { BiLoaderAlt } from "react-icons/bi";
 
-export const SetUpModalInput = ({ dispatch, onChangeFieldName, inputlabel, isValid, isLoading }) => {
+export const SetUpModalInput = ({ dispatch, onChangeFieldName, inputlabel, isValid, isLoading, placeholder }) => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center relative">
         <label className="w-24 text-white">{inputlabel}</label>
         <input
           className="ml-4 pl-1 outline-none flex-grow border-b border-gray-200 bg-transparent text-white"
-          placeholder="main"
+          placeholder={placeholder}
           required
           onChange={(e) =>
             dispatch({

@@ -17,7 +17,7 @@ export const filePathAction = (filePath, branchName, isBranchNameValid, dispatch
 
   return delayBounceFn(() => {
     client
-      .query({ query: GET_SWAGGER, variables: { repositoryName: repository.name, branchName, filePath }, errorPolicy: "ignore" })
+      .query({ query: GET_SWAGGER, variables: { repositoryName: repository.full_name, branchName, filePath }, errorPolicy: "ignore" })
       .then(({ data }) => {
         dispatch({ type: "FILE_PATH_CHECK", data });
       });

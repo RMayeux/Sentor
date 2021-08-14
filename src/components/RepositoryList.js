@@ -9,6 +9,7 @@ export const GET_REPOSITORIES = gql`
       id
       name
       hasWebhook
+      full_name
     }
   }
 `;

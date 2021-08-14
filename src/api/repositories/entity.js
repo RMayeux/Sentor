@@ -5,7 +5,7 @@ const Repository = objectType({
     t.nonNull.int("id");
     t.nonNull.boolean("hasWebhook");
     t.nonNull.string("name");
-    t.nonNull.int("repositoryId");
+    t.nonNull.string("full_name");
   },
 });
 

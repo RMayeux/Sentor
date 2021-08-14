@@ -16,7 +16,7 @@ export const branchNameAction = (branchName, repository, branches, dispatch) => 
   dispatch({ type: "BRANCH_NAME_CHECK_IN_PROGRESS" });
 
   if (!branches) {
-    return client.query({ query: GET_BRANCHES, variables: { repositoryName: repository.name } }).then(({ data }) => {
+    return client.query({ query: GET_BRANCHES, variables: { repositoryName: repository.full_name } }).then(({ data }) => {
       dispatch({ type: "BRANCHES_INIT", data });
     });
   }
