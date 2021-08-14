@@ -11,7 +11,7 @@ const githubWebhookReceiver = async ({ body }, res) => {
 
   const openApi = await prisma.openApi.findFirst({ where: { repositoryId: repository.id } });
 
-  await registryOpenApi(openApi, prisma, repository, body.head_commit.id);
+  await registryOpenApi(openApi, repository, body.head_commit.id);
 
   return res;
 };

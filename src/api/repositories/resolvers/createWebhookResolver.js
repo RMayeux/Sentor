@@ -1,15 +1,19 @@
 import { createWebhookForRepository, getWebhookByUrl } from "src/libs/github";
 import { ApolloError } from "apollo-server-errors";
 import { registryOpenApi } from "src/api/openApi/helpers/registryOpenApi";
+import { PrismaClient } from "@prisma/client";
 
-export const createWebhookResolver = async ({ session, prisma }, { repositoryId, repositoryName, filePath, branchName }) => {
+const prisma = new PrismaClient();
+
+export const createWebhookResolver = async ({ session }, { repositoryId, repositoryName, filePath, branchName }) => {
   const { userId } = session;
   const repository = await prisma.repository.findUnique({ where: { id: repositoryId } });
 
   if (repository?.enabled) throw new ApolloError("Webhook for this repository has already been created", "409");
 
-  const openApi = repository ? await prisma.openApi.findFirst({ where: { repositoryId: repository.id } }) : null;
+  const openApi = await getOpenApi(repository);
   const account = await prisma.account.findUnique({ where: { userId } });
+  const webhookId = await processWebhook(repositoryName, account);
 
   const newRepository = {
     id: repositoryId,
@@ -18,34 +22,38 @@ export const createWebhookResolver = async ({ session, prisma }, { repositoryId,
     branchName,
     name: repositoryName,
     enabled: true,
+    webhookId,
   };
 
-  // Creating Webhook in GitHub
-  let webhookId;
+  await Promise.all([processRepository(repository, newRepository), registryOpenApi(openApi, newRepository)]);
+};
+
+const processWebhook = async (repositoryName, account) => {
   try {
     let response = await createWebhookForRepository(repositoryName, account.accessToken);
-    webhookId = response.id;
+    return response.id;
   } catch (e) {
     if (e.response.status === 422) {
       const webhook = await getWebhookByUrl(repositoryName, account.accessToken);
-      console.log({ webhook });
-      webhookId = webhook.id;
+      return webhook.id;
     }
   }
-  // Database
+};
+
+const processRepository = async (repository, newRepository) => {
   if (repository) {
     await prisma.repository.update({
       where: {
-        id: repositoryId,
+        id: newRepository.repositoryId,
       },
       data: {
         ...newRepository,
-        webhookId,
+        webhookId: newRepository.webhookId,
       },
     });
   } else {
-    await prisma.repository.create({ data: { ...newRepository, webhookId } });
+    await prisma.repository.create({ data: { ...newRepository, webhookId: newRepository.webhookId } });
   }
-
-  await registryOpenApi(openApi, prisma, newRepository);
 };
+
+const getOpenApi = async (repository) => (repository ? await prisma.openApi.findFirst({ where: { repositoryId: repository.id } }) : null);
